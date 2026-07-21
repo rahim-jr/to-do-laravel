@@ -4,7 +4,55 @@ use App\Models\tags;
 use App\Models\todo;
 use App\Models\User;
 
-test('authenticated user can view todo index', function () {
+test('authenticated user can view todo index page', function () {
+    $user = User::factory()->create();
+    todo::factory()->count(3)->create(['user_id' => $user->id]);
+
+    $response = $this->actingAs($user)
+        ->get(route('todos.index'));
+
+    $response->assertOk()
+        ->assertViewIs('todo.index')
+        ->assertViewHas('todos');
+});
+
+test('authenticated user can view todo create page', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->get(route('todos.create'));
+
+    $response->assertOk()
+        ->assertViewIs('todo.create')
+        ->assertViewHas('tags');
+});
+
+test('authenticated user can view todo show page', function () {
+    $user = User::factory()->create();
+    $todo = todo::factory()->create(['user_id' => $user->id]);
+
+    $response = $this->actingAs($user)
+        ->get(route('todos.show', $todo));
+
+    $response->assertOk()
+        ->assertViewIs('todo.show')
+        ->assertViewHas('todo');
+});
+
+test('authenticated user can view todo edit page', function () {
+    $user = User::factory()->create();
+    $todo = todo::factory()->create(['user_id' => $user->id]);
+
+    $response = $this->actingAs($user)
+        ->get(route('todos.edit', $todo));
+
+    $response->assertOk()
+        ->assertViewIs('todo.edit')
+        ->assertViewHas('todo')
+        ->assertViewHas('tags');
+});
+
+test('authenticated user can view todo index via json', function () {
     $user = User::factory()->create();
     todo::factory()->count(3)->create(['user_id' => $user->id]);
 
@@ -36,7 +84,7 @@ test('authenticated user can create a todo', function () {
     ]);
 });
 
-test('authenticated user can view their todo details', function () {
+test('authenticated user can view their todo details via json', function () {
     $user = User::factory()->create();
     $todo = todo::factory()->create(['user_id' => $user->id]);
 
