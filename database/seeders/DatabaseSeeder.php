@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\tags;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,11 +16,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create default user if not exists
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Seed default tags
+        $defaultTags = ['Work', 'Personal', 'Urgent', 'Feature', 'Bug', 'Shopping'];
+        foreach ($defaultTags as $tagName) {
+            tags::firstOrCreate(['name' => $tagName]);
+        }
     }
 }
