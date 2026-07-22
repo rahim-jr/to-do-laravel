@@ -15,12 +15,9 @@ fi
 mkdir -p database
 touch database/database.sqlite
 
-# Run migrations and seed the database
+# Apply any new migrations (safe for production — never drops data)
 echo "Running database migrations..."
-php artisan migrate
-
-echo "Seeding the database..."
-php artisan migrate:fresh --seed
+php artisan migrate --force
 
 # Execute the container command (php artisan serve)
 exec "$@"
