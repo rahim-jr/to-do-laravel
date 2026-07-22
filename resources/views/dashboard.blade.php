@@ -45,9 +45,9 @@
             @else
                 <div class="mt-4 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
                     @foreach ($recentTodos as $todo)
-                        <div class="flex items-center justify-between py-3">
-                            <div class="flex items-center gap-3">
-                                <form action="{{ route('todos.toggle', $todo) }}" method="POST">
+                        <div class="flex items-center justify-between gap-3 py-3">
+                            <div class="flex items-center gap-3 min-w-0 flex-1">
+                                <form action="{{ route('todos.toggle', $todo) }}" method="POST" class="shrink-0">
                                     @csrf
                                     @method('PATCH')
                                     <button
@@ -59,19 +59,24 @@
                                         @endif
                                     </button>
                                 </form>
-                                <div>
-                                    <a href="{{ route('todos.show', $todo) }}" class="text-sm font-semibold text-zinc-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 {{ $todo->is_completed ? 'line-through text-zinc-400 dark:text-zinc-500' : '' }}">
+                                <div class="min-w-0 flex-1">
+                                    <a href="{{ route('todos.show', $todo) }}" class="text-sm font-semibold break-words text-zinc-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 {{ $todo->is_completed ? 'line-through text-zinc-400 dark:text-zinc-500' : '' }}">
                                         {{ $todo->title }}
                                     </a>
-                                    <div class="flex items-center gap-2 pt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-                                        <span>{{ $todo->created_at->diffForHumans() }}</span>
+                                    <div class="flex flex-wrap items-center gap-2 pt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+                                        @if ($todo->is_completed)
+                                            <flux:badge color="emerald" icon="check-circle" size="sm" class="shrink-0">Completed</flux:badge>
+                                        @else
+                                            <flux:badge color="amber" icon="clock" size="sm" class="shrink-0">Pending</flux:badge>
+                                        @endif
+                                        <span class="shrink-0">{{ $todo->created_at->diffForHumans() }}</span>
                                         @foreach ($todo->tags as $tag)
-                                            <flux:badge size="sm" color="zinc">{{ $tag->name }}</flux:badge>
+                                            <flux:badge size="sm" color="zinc" class="shrink-0">{{ $tag->name }}</flux:badge>
                                         @endforeach
                                     </div>
                                 </div>
                             </div>
-                            <flux:button variant="ghost" size="sm" icon="chevron-right" href="{{ route('todos.show', $todo) }}" />
+                            <flux:button variant="ghost" size="sm" icon="chevron-right" href="{{ route('todos.show', $todo) }}" class="shrink-0" />
                         </div>
                     @endforeach
                 </div>
