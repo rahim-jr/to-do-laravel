@@ -30,5 +30,8 @@ class DatabaseSeeder extends Seeder
         foreach ($defaultTags as $tagName) {
             tags::firstOrCreate(['name' => $tagName]);
         }
+
+        // Seed 100 dummy to-dos
+        $this->call(TodoSeeder::class);
     }
 }

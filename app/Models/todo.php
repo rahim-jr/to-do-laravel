@@ -17,6 +17,8 @@ class todo extends Model
         'title',
         'description',
         'is_completed',
+        'due_at',
+        'reminder_set_at',
     ];
 
     /**
@@ -28,6 +30,8 @@ class todo extends Model
     {
         return [
             'is_completed' => 'boolean',
+            'due_at' => 'datetime',
+            'reminder_set_at' => 'datetime',
         ];
     }
 

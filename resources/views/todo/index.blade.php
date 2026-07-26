@@ -53,6 +53,26 @@
                     </button>
                 </div>
 
+                {{-- Sort Controls --}}
+                <div class="flex items-center gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1 dark:border-zinc-700 dark:bg-zinc-900/50 w-full sm:w-auto">
+                    <a
+                        href="{{ route('todos.index', ['sort' => 'desc']) }}"
+                        class="flex flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {{ ($currentSort ?? 'latest') === 'latest' ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-white' : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
+                        title="Sort by newest created date first"
+                    >
+                        <flux:icon name="bars-arrow-down" class="size-3.5" />
+                        Newest
+                    </a>
+                    <a
+                        href="{{ route('todos.index', ['sort' => 'asc']) }}"
+                        class="flex flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {{ ($currentSort ?? 'latest') === 'oldest' ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-white' : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
+                        title="Sort by oldest created date first"
+                    >
+                        <flux:icon name="bars-arrow-up" class="size-3.5" />
+                        Oldest
+                    </a>
+                </div>
+
                 <flux:button variant="primary" icon="plus" href="{{ route('todos.create') }}" class="w-full sm:w-auto justify-center">
                     New Task
                 </flux:button>

@@ -16,9 +16,12 @@ class todos_controller extends Controller
      */
     public function index(Request $request): View|JsonResponse
     {
+        $sort = strtolower((string) $request->query('sort', 'desc'));
+        $direction = in_array($sort, ['asc', 'oldest'], true) ? 'asc' : 'desc';
+
         $todos = $request->user()->todos()
             ->with(['tags', 'attachments'])
-            ->latest()
+            ->orderBy('created_at', $direction)
             ->get();
 
         if ($request->wantsJson()) {
@@ -30,6 +33,7 @@ class todos_controller extends Controller
 
         return view('todo.index', [
             'todos' => $todos,
+            'currentSort' => $direction === 'asc' ? 'oldest' : 'latest',
         ]);
     }
 

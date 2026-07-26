@@ -22,7 +22,8 @@ class todoFactory extends Factory
             'user_id' => User::factory(),
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
-            'is_completed' => fake()->boolean(false),
+            'is_completed' => fake()->boolean(30),
+            'created_at' => fake()->dateTimeBetween('-60 days', 'now'),
         ];
     }
 }

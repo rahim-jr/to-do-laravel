@@ -3,6 +3,7 @@
 use App\Models\tags;
 use App\Models\todo;
 use App\Models\User;
+use Database\Seeders\TodoSeeder;
 
 test('authenticated user can view todo index page', function () {
     $user = User::factory()->create();
@@ -157,4 +158,46 @@ test('authenticated user can toggle todo completion', function () {
         ->assertJsonPath('data.is_completed', true);
 
     expect($todo->fresh()->is_completed)->toBeTrue();
+});
+
+test('authenticated user can sort todos by created date descending and ascending', function () {
+    $user = User::factory()->create();
+
+    $olderTodo = todo::factory()->create([
+        'user_id' => $user->id,
+        'title' => 'Older Todo',
+        'created_at' => now()->subDays(5),
+    ]);
+
+    $newerTodo = todo::factory()->create([
+        'user_id' => $user->id,
+        'title' => 'Newer Todo',
+        'created_at' => now()->subDays(1),
+    ]);
+
+    // Test descending order (default/latest)
+    $responseDesc = $this->actingAs($user)
+        ->getJson(route('todos.index', ['sort' => 'desc']));
+
+    $responseDesc->assertOk();
+    $dataDesc = $responseDesc->json('data');
+    expect($dataDesc[0]['id'])->toBe($newerTodo->id);
+    expect($dataDesc[1]['id'])->toBe($olderTodo->id);
+
+    // Test ascending order (oldest)
+    $responseAsc = $this->actingAs($user)
+        ->getJson(route('todos.index', ['sort' => 'asc']));
+
+    $responseAsc->assertOk();
+    $dataAsc = $responseAsc->json('data');
+    expect($dataAsc[0]['id'])->toBe($olderTodo->id);
+    expect($dataAsc[1]['id'])->toBe($newerTodo->id);
+});
+
+test('factory can create 100 dummy todos via TodoSeeder', function () {
+    $user = User::factory()->create(['email' => 'test@example.com']);
+
+    $this->seed(TodoSeeder::class);
+
+    expect(todo::where('user_id', $user->id)->count())->toBeGreaterThanOrEqual(100);
 });
