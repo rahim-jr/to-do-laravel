@@ -29,7 +29,7 @@ class SendTodoDueReminders extends Command
     {
         $todos = todo::with('user')
             ->where('is_completed', false)
-            ->whereNull('reminder_sent_at')
+            ->whereNull('reminder_set_at')
             ->whereNotNull('due_at')
             ->where('due_at', '<=', now()->addDays(3))
             ->where('due_at', '>', now())
@@ -40,7 +40,7 @@ class SendTodoDueReminders extends Command
         foreach ($todos as $todoItem) {
             if ($todoItem->user) {
                 $todoItem->user->notify(new to_do_reminder_notification($todoItem));
-                $todoItem->update(['reminder_sent_at' => now()]);
+                $todoItem->update(['reminder_set_at' => now()]);
                 $count++;
             }
         }

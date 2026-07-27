@@ -65,6 +65,17 @@
                 @endif
             </div>
 
+            {{-- Due Date Section --}}
+            @if ($todo->due_at)
+                <div class="border-t border-zinc-100 py-5 dark:border-zinc-800">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Due Date</h3>
+                    <p class="mt-2 text-sm font-medium flex items-center gap-2 {{ $todo->due_at->isPast() && ! $todo->is_completed ? 'text-red-600 dark:text-red-400' : 'text-zinc-800 dark:text-zinc-200' }}">
+                        <flux:icon name="calendar" class="size-4" />
+                        {{ $todo->due_at->format('F j, Y \a\t g:i A') }} ({{ $todo->due_at->diffForHumans() }})
+                    </p>
+                </div>
+            @endif
+
             {{-- Tags Section --}}
             @if ($todo->tags->isNotEmpty())
                 <div class="border-t border-zinc-100 py-5 dark:border-zinc-800">

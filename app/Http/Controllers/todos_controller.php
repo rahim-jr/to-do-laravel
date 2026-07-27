@@ -66,6 +66,7 @@ class todos_controller extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'due_at' => ['nullable', 'date'],
             'is_completed' => ['sometimes', 'boolean'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['exists:tags,id'],
@@ -75,6 +76,7 @@ class todos_controller extends Controller
         $todo = $request->user()->todos()->create([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
+            'due_at' => $validated['due_at'] ?? null,
             'is_completed' => $validated['is_completed'] ?? false,
         ]);
 
@@ -158,14 +160,28 @@ class todos_controller extends Controller
         $validated = $request->validate([
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'due_at' => ['nullable', 'date'],
             'is_completed' => ['sometimes', 'boolean'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['exists:tags,id'],
         ]);
 
+        $newDueAt = array_key_exists('due_at', $validated) ? $validated['due_at'] : $todo->due_at;
+        $reminderSetAt = $todo->reminder_set_at;
+
+        if (array_key_exists('due_at', $validated)) {
+            $formattedNew = $newDueAt ? date('Y-m-d H:i:s', strtotime((string) $newDueAt)) : null;
+            $formattedOld = $todo->due_at?->format('Y-m-d H:i:s');
+            if ($formattedNew !== $formattedOld) {
+                $reminderSetAt = null;
+            }
+        }
+
         $todo->update([
             'title' => $validated['title'] ?? $todo->title,
             'description' => array_key_exists('description', $validated) ? $validated['description'] : $todo->description,
+            'due_at' => $newDueAt,
+            'reminder_set_at' => $reminderSetAt,
             'is_completed' => array_key_exists('is_completed', $validated) ? $validated['is_completed'] : $todo->is_completed,
         ]);
 

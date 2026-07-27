@@ -152,6 +152,13 @@
                                         {{ $todo->created_at->diffForHumans() }}
                                     </span>
 
+                                    @if ($todo->due_at)
+                                        <span class="flex items-center gap-1 shrink-0 {{ $todo->due_at->isPast() && ! $todo->is_completed ? 'font-medium text-red-600 dark:text-red-400' : 'text-zinc-500 dark:text-zinc-400' }}" title="Due date: {{ $todo->due_at->format('M j, Y g:i A') }}">
+                                            <flux:icon name="clock" class="size-3" />
+                                            Due {{ $todo->due_at->diffForHumans() }}
+                                        </span>
+                                    @endif
+
                                     @if ($todo->attachments->isNotEmpty())
                                         <span class="flex items-center gap-1 font-medium text-indigo-500 shrink-0">
                                             <flux:icon name="paper-clip" class="size-3" />

@@ -43,6 +43,17 @@
                     <flux:error name="description" />
                 </flux:field>
 
+                {{-- Due Date --}}
+                <flux:field>
+                    <flux:label>Due Date</flux:label>
+                    <flux:input
+                        name="due_at"
+                        type="datetime-local"
+                        value="{{ old('due_at', $todo->due_at?->format('Y-m-d\TH:i')) }}"
+                    />
+                    <flux:error name="due_at" />
+                </flux:field>
+
                 {{-- Tag Selection --}}
                 @if ($tags->isNotEmpty())
                     @php

@@ -85,6 +85,26 @@ test('authenticated user can create a todo', function () {
     ]);
 });
 
+test('authenticated user can create a todo with a due date', function () {
+    $user = User::factory()->create();
+    $dueDate = now()->addDays(3)->format('Y-m-d H:i:s');
+
+    $response = $this->actingAs($user)
+        ->post(route('todos.store'), [
+            'title' => 'Todo with Due Date',
+            'description' => 'Description',
+            'due_at' => '2026-08-01 15:00:00',
+        ]);
+
+    $response->assertRedirect(route('todos.index'));
+
+    $this->assertDatabaseHas('todos', [
+        'user_id' => $user->id,
+        'title' => 'Todo with Due Date',
+        'due_at' => '2026-08-01 15:00:00',
+    ]);
+});
+
 test('authenticated user can view their todo details via json', function () {
     $user = User::factory()->create();
     $todo = todo::factory()->create(['user_id' => $user->id]);
@@ -130,6 +150,28 @@ test('authenticated user can update their todo', function () {
     ]);
 });
 
+test('authenticated user can update their todo due date', function () {
+    $user = User::factory()->create();
+    $todo = todo::factory()->create([
+        'user_id' => $user->id,
+        'title' => 'Task without due date',
+        'due_at' => null,
+    ]);
+
+    $response = $this->actingAs($user)
+        ->put(route('todos.update', $todo), [
+            'title' => 'Task without due date',
+            'due_at' => '2026-08-15 10:00:00',
+        ]);
+
+    $response->assertRedirect(route('todos.index'));
+
+    $this->assertDatabaseHas('todos', [
+        'id' => $todo->id,
+        'due_at' => '2026-08-15 10:00:00',
+    ]);
+});
+
 test('authenticated user can delete their todo', function () {
     $user = User::factory()->create();
     $todo = todo::factory()->create(['user_id' => $user->id]);
@@ -139,9 +181,7 @@ test('authenticated user can delete their todo', function () {
 
     $response->assertOk();
 
-    $this->assertDatabaseMissing('todos', [
-        'id' => $todo->id,
-    ]);
+    $this->assertSoftDeleted($todo);
 });
 
 test('authenticated user can toggle todo completion', function () {

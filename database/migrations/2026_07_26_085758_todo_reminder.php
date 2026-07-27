@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('todos', function (Blueprint $table) {
-            $table->dropColumn(['due_at', 'reminder_sent_at']);
+            $table->dropColumn(['due_at', 'reminder_set_at']);
         });
     }
 };
